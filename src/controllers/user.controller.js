@@ -8,6 +8,14 @@ const login = async (req, res) => {
   res.status(mapStatusHTTP(status)).json(data);
 };
 
+const creteNewUser = async (req, res) => {
+  const { displayName, email, password } = req.body;
+  
+  const { status, data } = await userService.creteNewUser({ displayName, email, password });
+  res.status(mapStatusHTTP(status)).json(data);
+};
+
 module.exports = {
   login,
+  creteNewUser,
 };
