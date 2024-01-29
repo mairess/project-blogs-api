@@ -6,7 +6,10 @@
  */
 module.exports = (sequelize, DataTypes) => {
     const BlogPostsModel = sequelize.define('BlogPost', {
-      id: DataTypes.INTEGER,
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+      },
       title: DataTypes.STRING,
       content: DataTypes.STRING,
       userId: DataTypes.INTEGER,
@@ -17,11 +20,11 @@ module.exports = (sequelize, DataTypes) => {
       underscored: true
     })
   
-    BlogPostsModel.associate = ({ PostsCategories, Categories, User }) => {
-      BlogPostsModel.belongsToMany(Categories, {
-        through: PostsCategories,
+    BlogPostsModel.associate = ({ PostCategory, Category, User }) => {
+      BlogPostsModel.belongsToMany(Category, {
+        through: PostCategory,
         foreignKey: "postId",
-        as: "categories",
+        as: "postCategories",
         otherKey: "categoryId",
       });
 
