@@ -1,5 +1,3 @@
-'use strict';
-/** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('posts_categories', {
@@ -9,6 +7,7 @@ module.exports = {
         primaryKey: true,
         field: 'post_id',
         onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
         references: {
           model: 'blog_posts',
           key: 'id'
@@ -20,6 +19,7 @@ module.exports = {
         primaryKey: true,
         field: 'category_id',
         onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
         references: {
           model: 'categories',
           key: 'id'
