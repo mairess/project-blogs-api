@@ -31,10 +31,8 @@ const creteNewUser = async (userCredentials) => {
   const user = await User.findOne({
     where: {
       email: userCredentials.email,
-      // password: userCredentials.password,
     },
   });
-  console.log('user', user);
   
   if (user && userCredentials.email === user.email) {
     return { status: 'CONFLICT', data: { message: 'User already registered' } };
@@ -44,12 +42,19 @@ const creteNewUser = async (userCredentials) => {
 
   const { displayName, email } = userCredentials;
   const token = auth.createToken({ displayName, email });
-  console.log('after create token');
 
   return { status: 'CREATED', data: { token } };
+};
+
+const getAll = async () => {
+  const users = await User.findAll({ attributes: { exclude: ['password'] },
+  });
+
+  return { status: 'SUCCESSFUL', data: users };
 };
 
 module.exports = {
   login,
   creteNewUser,
+  getAll,
 };
