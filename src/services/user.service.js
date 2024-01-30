@@ -6,11 +6,7 @@ const login = async (userCredentials) => {
   const error = schema.validateNewLogin(userCredentials);
   if (error) return { status: 'BAD_REQUEST', data: { message: error.message } };
 
-  const user = await User.findOne({
-    where: {
-      email: userCredentials.email,
-    },
-  });
+  const user = await User.findOne({ where: { email: userCredentials.email } });
   
   if (!user || user.password !== userCredentials.password) {
     return { status: 'BAD_REQUEST', data: { message: 'Invalid fields' } };
@@ -18,9 +14,6 @@ const login = async (userCredentials) => {
 
   const { email } = user;
   const token = auth.createToken({ email });
-  if (!token) {
-    return;
-  }
   return { status: 'SUCCESSFUL', data: { token } };
 };
 
@@ -28,11 +21,7 @@ const creteNewUser = async (userCredentials) => {
   const error = schema.validateCreateNewUser(userCredentials);
   if (error) return { status: 'BAD_REQUEST', data: { message: error.message } };
 
-  const user = await User.findOne({
-    where: {
-      email: userCredentials.email,
-    },
-  });
+  const user = await User.findOne({ where: { email: userCredentials.email } });
   
   if (user && userCredentials.email === user.email) {
     return { status: 'CONFLICT', data: { message: 'User already registered' } };
@@ -53,8 +42,17 @@ const getAll = async () => {
   return { status: 'SUCCESSFUL', data: users };
 };
 
+const getById = async (id) => {
+  const user = await User.findOne({ where: { id }, attributes: { exclude: ['password'] } });
+
+  if (!user) return { status: 'NOT_FOUND', data: { message: 'User does not exist' } };
+
+  return { status: 'SUCCESSFUL', data: user };
+};
+
 module.exports = {
   login,
   creteNewUser,
   getAll,
+  getById,
 };
