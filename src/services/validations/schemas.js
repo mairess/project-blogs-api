@@ -26,7 +26,12 @@ const addCreateNewUserSchema = Joi.object({
     }),
 });
 
+const addNewCategorySchema = Joi.object({
+  name: Joi.string().required().min(1),
+});
+
 module.exports = {
   addNewLoginSchema,
   addCreateNewUserSchema,
+  addNewCategorySchema,
 };
