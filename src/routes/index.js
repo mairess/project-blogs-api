@@ -1,7 +1,9 @@
-const loginRoute = require('./login.route');
-const userRoute = require('./user.route');
+const loginRoutes = require('./login.route');
+const userRoutes = require('./user.route');
+const categoryRoutes = require('./category.route');
 
 module.exports = {
-  loginRoute,
-  userRoute,
+  loginRoutes,
+  userRoutes,
+  categoryRoutes,
 };
