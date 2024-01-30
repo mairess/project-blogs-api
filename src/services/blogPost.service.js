@@ -14,7 +14,6 @@ const createNewPost = async (blogPost) => {
   } catch (err) { return { status: 'BAD_REQUEST', data: { message: err.message } }; }
   const theUser = await User.findOne({ where: { email: blogPost.email } });
   const thePost = await BlogPost.create({ title, content, categoryIds, email, userId: theUser.id });
-  console.log('thePost', thePost);
   await PostCategory.bulkCreate([
     { postId: thePost.id, categoryId: 1 },
     { postId: thePost.id, categoryId: 2 },
