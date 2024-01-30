@@ -1,4 +1,9 @@
-const { addNewLoginSchema, addCreateNewUserSchema, addNewCategorySchema } = require('./schemas');
+const { 
+  addNewLoginSchema, 
+  addCreateNewUserSchema, 
+  addNewCategorySchema,
+  addNewPostSchema, 
+} = require('./schemas');
 
 const validateNewLogin = (keysObjectToValidate) => {
   const { error } = addNewLoginSchema.validate(keysObjectToValidate);
@@ -18,8 +23,15 @@ const validateCategory = (keysObjectToValidate) => {
   if (error) return { status: 'BAD_REQUEST', message: error.message };
 };
 
+const validateBlogPost = (keysObjectToValidate) => {
+  const { error } = addNewPostSchema.validate(keysObjectToValidate);
+
+  if (error) return { status: 'BAD_REQUEST', message: error.message };
+};
+
 module.exports = {
   validateNewLogin,
   validateCreateNewUser,
   validateCategory,
+  validateBlogPost,
 };
