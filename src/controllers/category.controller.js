@@ -7,6 +7,12 @@ const creteNewCategory = async (req, res) => {
   res.status(mapStatusHTTP(status)).json(data);
 };
 
+const getAll = async (req, res) => {
+  const { status, data } = await categoryService.getAll();
+  res.status(mapStatusHTTP(status)).json(data);
+};
+
 module.exports = {
   creteNewCategory,
+  getAll,
 };

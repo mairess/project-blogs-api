@@ -12,6 +12,13 @@ const creteNewCategory = async (categoryData) => {
   return { status: 'CREATED', data: category };
 };
 
+const getAll = async () => {
+  const users = await Category.findAll();
+
+  return { status: 'SUCCESSFUL', data: users };
+};
+
 module.exports = {
   creteNewCategory,
+  getAll,
 };
