@@ -18,6 +18,13 @@ const createNewPost = async (req, res) => {
   }
 };
 
+const getAll = async (req, res) => {
+  const { email } = req.user.user;
+  const { status, data } = await blogPostService.getAll(email);
+  res.status(mapStatusHTTP(status)).json(data);
+};
+
 module.exports = {
   createNewPost,
+  getAll,
 };

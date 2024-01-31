@@ -39,6 +39,20 @@ const createNewPost = async ({ title, content, categoryIds, email }) => {
   return { status: 'CREATED', data: result };
 };
 
-module.exports = {
-  createNewPost,
+const getAll = async (email) => {
+  const user = await User.findOne({ where: { email } });
+  const posts = await BlogPost.findAll({ 
+    where: { userId: user.id },
+    include: [
+      { model: User, as: 'user', attributes: { exclude: ['password'] } },
+      { 
+        model: Category, 
+        as: 'categories', 
+        attributes: { exclude: ['PostCategory'] }, 
+        through: { attributes: [] } },
+    ],
+  });
+  return { status: 'SUCCESSFUL', data: posts };
 };
+
+module.exports = { createNewPost, getAll };
