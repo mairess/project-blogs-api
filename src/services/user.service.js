@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const { User } = require('../models');
 const { auth } = require('../utils');
 const { validateNewLogin, validateCreateNewUser } = require('./validations/validationInputValues');
@@ -8,7 +9,7 @@ const login = async (userCredentials) => {
 
   const user = await User.findOne({ where: { email: userCredentials.email } });
   
-  if (!user || user.password !== userCredentials.password) {
+  if (!user || bcrypt.compareSync(user.password, userCredentials.password)) {
     return { status: 'BAD_REQUEST', data: { message: 'Invalid fields' } };
   }
 
@@ -26,8 +27,11 @@ const creteNewUser = async (userCredentials) => {
   if (user && userCredentials.email === user.email) {
     return { status: 'CONFLICT', data: { message: 'User already registered' } };
   }
+  const hashedCredentials = userCredentials;
+  const hashedPassword = bcrypt.hashSync(hashedCredentials.password, 10);
+  hashedCredentials.password = hashedPassword;
 
-  await User.create(userCredentials);
+  await User.create(hashedCredentials);
 
   const { displayName, email } = userCredentials;
   const token = auth.createToken({ displayName, email });
@@ -50,9 +54,4 @@ const getById = async (id) => {
   return { status: 'SUCCESSFUL', data: user };
 };
 
-module.exports = {
-  login,
-  creteNewUser,
-  getAll,
-  getById,
-};
+module.exports = { login, creteNewUser, getAll, getById };
