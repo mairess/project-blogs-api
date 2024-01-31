@@ -5,6 +5,7 @@ const {
   validateCreateNewUser,
   validateCategory,
   validateBlogPost,
+  validateUpdatePost,
 } = require('./validationInputValues');
 
 module.exports = {
@@ -14,4 +15,5 @@ module.exports = {
   validateCategory,
   validateBlogPost,
   associateCategoryWithPost,
+  validateUpdatePost,
 };

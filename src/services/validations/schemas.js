@@ -42,9 +42,19 @@ const addNewPostSchema = Joi.object({
     'array.min': 'one or more "categoryIds" not found',
   });
 
+const addNewUpdatePostSchema = Joi.object({
+  title: Joi.string().required().min(1),
+  content: Joi.string().required().min(1),
+})
+  .messages({
+    'string.empty': errorMessage,
+    'any.required': errorMessage,
+  });
+
 module.exports = {
   addNewLoginSchema,
   addCreateNewUserSchema,
   addNewCategorySchema,
   addNewPostSchema,
+  addNewUpdatePostSchema,
 };
