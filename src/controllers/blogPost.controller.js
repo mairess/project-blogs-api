@@ -24,7 +24,14 @@ const getAll = async (req, res) => {
   res.status(mapStatusHTTP(status)).json(data);
 };
 
+const getById = async (req, res) => {
+  const { id } = req.params;
+  const { status, data } = await blogPostService.getById(id);
+  res.status(mapStatusHTTP(status)).json(data);
+};
+
 module.exports = {
   createNewPost,
   getAll,
+  getById,
 };

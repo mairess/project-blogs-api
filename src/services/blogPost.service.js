@@ -31,8 +31,7 @@ const getAll = async (email) => {
     where: { userId: user.id }, 
     include: [
       { model: User, as: 'user', attributes: { exclude: ['password'] } },
-      { 
-        model: Category, 
+      { model: Category, 
         as: 'categories', 
         attributes: { exclude: ['PostCategory'] }, 
         through: { attributes: [] } },
@@ -41,4 +40,20 @@ const getAll = async (email) => {
   return { status: 'SUCCESSFUL', data: posts };
 };
 
-module.exports = { createNewPost, getAll };
+const getById = async (id) => {
+  const post = await BlogPost.findOne({
+    where: { id },
+    include: [
+      { model: User, as: 'user', attributes: { exclude: ['password'] } },
+      { model: Category, 
+        as: 'categories', 
+        attributes: { exclude: ['PostCategory'] }, 
+        through: { attributes: [] } },
+    ],
+  });
+  if (!post) return { status: 'NOT_FOUND', data: { message: 'Post does not exist' } };
+
+  return { status: 'SUCCESSFUL', data: post };
+};
+
+module.exports = { createNewPost, getAll, getById };
