@@ -1,5 +1,5 @@
 const { userService } = require('../services');
-const mapStatusHTTP = require('../utils/mapStatusHTTP');
+const { mapStatusHTTP } = require('../utils');
 
 const login = async (req, res) => {
   const { email, password } = req.body;

@@ -1,5 +1,5 @@
 const { categoryService } = require('../services');
-const mapStatusHTTP = require('../utils/mapStatusHTTP');
+const { mapStatusHTTP } = require('../utils');
 
 const creteNewCategory = async (req, res) => {
   const { name } = req.body;

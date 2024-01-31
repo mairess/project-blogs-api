@@ -1,8 +1,8 @@
 const { Category } = require('../models');
-const schema = require('./validations/validationInputValues');
+const { validateCategory } = require('./validations');
 
 const creteNewCategory = async (categoryData) => {
-  const error = schema.validateCategory(categoryData);
+  const error = validateCategory(categoryData);
   if (error) return { status: 'BAD_REQUEST', data: { message: error.message } };
 
   await Category.create(categoryData);

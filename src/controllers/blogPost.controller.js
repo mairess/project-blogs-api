@@ -1,5 +1,5 @@
 const { blogPostService } = require('../services');
-const mapStatusHTTP = require('../utils/mapStatusHTTP');
+const { mapStatusHTTP } = require('../utils');
 
 const createNewPost = async (req, res) => {
   const { title, content, categoryIds } = req.body;

@@ -1,9 +1,9 @@
 const { User } = require('../models');
-const auth = require('../utils/auth');
-const schema = require('./validations/validationInputValues');
+const { auth } = require('../utils');
+const { validateNewLogin, validateCreateNewUser } = require('./validations/validationInputValues');
 
 const login = async (userCredentials) => {
-  const error = schema.validateNewLogin(userCredentials);
+  const error = validateNewLogin(userCredentials);
   if (error) return { status: 'BAD_REQUEST', data: { message: error.message } };
 
   const user = await User.findOne({ where: { email: userCredentials.email } });
@@ -18,7 +18,7 @@ const login = async (userCredentials) => {
 };
 
 const creteNewUser = async (userCredentials) => {
-  const error = schema.validateCreateNewUser(userCredentials);
+  const error = validateCreateNewUser(userCredentials);
   if (error) return { status: 'BAD_REQUEST', data: { message: error.message } };
 
   const user = await User.findOne({ where: { email: userCredentials.email } });
