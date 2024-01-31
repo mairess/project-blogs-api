@@ -1,28 +1,14 @@
 const Sequelize = require('sequelize');
-const { BlogPost, User, Category, PostCategory } = require('../models');
-const schema = require('./validations/validationInputValues');
+const { BlogPost, User, Category } = require('../models');
 const config = require('../config/config');
+const { validateCategories, validateBlogPost, 
+  associateCategoryWithPost } = require('./validations');
 
 const env = process.env.NODE_ENV || 'development';
 const sequelize = new Sequelize(config[env]);
 
-const validateCategories = async (categoryIds) => {
-  const arrayOfPromises = categoryIds.map(async (id) => {
-    const category = await Category.findByPk(id);
-    if (!category) {
-      throw new Error('one or more "categoryIds" not found');
-    }
-  });
-  await Promise.all(arrayOfPromises);
-};
-
-const associateCategoryWithPost = async (postId, categoryIds, transaction) => {
-  const arrayOfPostCategory = categoryIds.map((categoryId) => ({ postId, categoryId }));
-  await PostCategory.bulkCreate(arrayOfPostCategory, transaction);
-};
-
 const createNewPost = async ({ title, content, categoryIds, email }) => {
-  const error = schema.validateBlogPost({ title, content, categoryIds, email });
+  const error = validateBlogPost({ title, content, categoryIds, email });
   if (error) return { status: 'BAD_REQUEST', data: { message: error.message } };
   const result = await sequelize.transaction(async (t) => {
     try { 
@@ -42,7 +28,7 @@ const createNewPost = async ({ title, content, categoryIds, email }) => {
 const getAll = async (email) => {
   const user = await User.findOne({ where: { email } });
   const posts = await BlogPost.findAll({ 
-    where: { userId: user.id },
+    where: { userId: user.id }, 
     include: [
       { model: User, as: 'user', attributes: { exclude: ['password'] } },
       { 
