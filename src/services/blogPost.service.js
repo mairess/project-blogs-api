@@ -1,29 +1,6 @@
-const Sequelize = require('sequelize');
 const { BlogPost, User, Category } = require('../models');
-const config = require('../config/config');
-const { validateCategories, validateBlogPost, 
-  associateCategoryWithPost } = require('./validations');
-
-const env = process.env.NODE_ENV || 'development';
-const sequelize = new Sequelize(config[env]);
-
-const createNewPost = async ({ title, content, categoryIds, email }) => {
-  const error = validateBlogPost({ title, content, categoryIds, email });
-  if (error) return { status: 'BAD_REQUEST', data: { message: error.message } };
-  const result = await sequelize.transaction(async (t) => {
-    try { 
-      await validateCategories(categoryIds);
-    } catch (err) { 
-      throw new Error(err.message);
-    }
-    const user = await User.findOne({ where: { email } });
-    const post = await BlogPost
-      .create({ title, content, categoryIds, email, userId: user.id }, { transaction: t });
-    await associateCategoryWithPost(post.id, categoryIds, { transaction: t });
-    return post;
-  });
-  return { status: 'CREATED', data: result };
-};
+const { validateUpdatePost } = require('./validations');
+const createNewPost = require('./createNewPost');
 
 const getAll = async (email) => {
   const user = await User.findOne({ where: { email } });
@@ -34,9 +11,7 @@ const getAll = async (email) => {
       { model: Category, 
         as: 'categories', 
         attributes: { exclude: ['PostCategory'] }, 
-        through: { attributes: [] } },
-    ],
-  });
+        through: { attributes: [] } }] });
   return { status: 'SUCCESSFUL', data: posts };
 };
 
@@ -48,12 +23,20 @@ const getById = async (id) => {
       { model: Category, 
         as: 'categories', 
         attributes: { exclude: ['PostCategory'] }, 
-        through: { attributes: [] } },
-    ],
-  });
+        through: { attributes: [] } }] });
   if (!post) return { status: 'NOT_FOUND', data: { message: 'Post does not exist' } };
 
   return { status: 'SUCCESSFUL', data: post };
 };
+const update = async (postData, id, email) => {
+  const error = validateUpdatePost(postData);
+  if (error) return { status: 'BAD_REQUEST', data: { message: error.message } };
+  const user = await User.findOne({ where: { email } });
+  const blogPost = await BlogPost.findOne({ where: { id, userId: user.id } });
+  if (!blogPost) return { status: 'UNAUTHORIZED', data: { message: 'Unauthorized user' } };
+  await BlogPost.update(postData, { where: { id } });
+  const updatedPost = await getById(id);
+  return { status: updatedPost.status, data: updatedPost.data };
+};
 
-module.exports = { createNewPost, getAll, getById };
+module.exports = { createNewPost, getAll, getById, update };
