@@ -11,7 +11,6 @@ const searchPostEmpty = async (email) => {
         attributes: { exclude: ['PostCategory'] }, 
         through: { attributes: [] } }],
   });
-  console.log('AllPosts', AllPosts);
           
   return { status: 'SUCCESSFUL', data: AllPosts };
 };

@@ -1,12 +1,12 @@
-const route = require('express').Router();
+const router = require('express').Router();
 const { blogPostController } = require('../controllers');
 const authMiddleware = require('../middlewares/auth');
 
-route.get('/post/search', authMiddleware, blogPostController.searchPost);
-route.post('/post', authMiddleware, blogPostController.createNewPost);
-route.get('/post', authMiddleware, blogPostController.getAll);
-route.get('/post/:id', authMiddleware, blogPostController.getById);
-route.put('/post/:id', authMiddleware, blogPostController.update);
-route.delete('/post/:id', authMiddleware, blogPostController.deletePost);
+router.get('/search', authMiddleware, blogPostController.searchPost);
+router.post('/', authMiddleware, blogPostController.createNewPost);
+router.get('/', authMiddleware, blogPostController.getAll);
+router.get('/:id', authMiddleware, blogPostController.getById);
+router.put('/:id', authMiddleware, blogPostController.update);
+router.delete('/:id', authMiddleware, blogPostController.deletePost);
 
-module.exports = route;
+module.exports = router;
