@@ -2,6 +2,7 @@ const route = require('express').Router();
 const { blogPostController } = require('../controllers');
 const authMiddleware = require('../middlewares/auth');
 
+route.get('/post/search', authMiddleware, blogPostController.searchPost);
 route.post('/post', authMiddleware, blogPostController.createNewPost);
 route.get('/post', authMiddleware, blogPostController.getAll);
 route.get('/post/:id', authMiddleware, blogPostController.getById);
