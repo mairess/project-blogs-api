@@ -27,8 +27,8 @@ const creteNewUser = async (userCredentials) => {
   if (user && userCredentials.email === user.email) {
     return { status: 'CONFLICT', data: { message: 'User already registered' } };
   }
+  const hashedPassword = bcrypt.hashSync(userCredentials.password, 10);
   const hashedCredentials = userCredentials;
-  const hashedPassword = bcrypt.hashSync(hashedCredentials.password, 10);
   hashedCredentials.password = hashedPassword;
 
   await User.create(hashedCredentials);

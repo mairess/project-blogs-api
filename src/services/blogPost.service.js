@@ -32,11 +32,20 @@ const update = async (postData, id, email) => {
   const error = validateUpdatePost(postData);
   if (error) return { status: 'BAD_REQUEST', data: { message: error.message } };
   const user = await User.findOne({ where: { email } });
-  const blogPost = await BlogPost.findOne({ where: { id, userId: user.id } });
-  if (!blogPost) return { status: 'UNAUTHORIZED', data: { message: 'Unauthorized user' } };
+  const userPost = await BlogPost.findOne({ where: { id, userId: user.id } });
+  if (!userPost) return { status: 'UNAUTHORIZED', data: { message: 'Unauthorized user' } };
   await BlogPost.update(postData, { where: { id } });
   const updatedPost = await getById(id);
   return { status: updatedPost.status, data: updatedPost.data };
 };
+const deletePost = async (id, email) => {
+  const post = await BlogPost.findOne({ where: { id } });
+  if (!post) return { status: 'NOT_FOUND', data: { message: 'Post does not exist' } };
+  const user = await User.findOne({ where: { email } });
+  const userPost = await BlogPost.findOne({ where: { id, userId: user.id } });
+  if (!userPost) return { status: 'UNAUTHORIZED', data: { message: 'Unauthorized user' } };
+  await BlogPost.destroy({ where: { id } });
+  return { status: 'NO_CONTENT' };
+};
 
-module.exports = { createNewPost, getAll, getById, update };
+module.exports = { createNewPost, getAll, getById, update, deletePost };
