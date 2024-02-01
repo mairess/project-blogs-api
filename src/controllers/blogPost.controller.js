@@ -7,11 +7,7 @@ const createNewPost = async (req, res) => {
   
   try {
     const { status, data } = await blogPostService.createNewPost({ 
-      title, 
-      content,
-      categoryIds,
-      email,
-    });
+      title, content, categoryIds, email });
     res.status(mapStatusHTTP(status)).json(data);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -45,10 +41,18 @@ const deletePost = async (req, res) => {
   res.status(mapStatusHTTP(status)).json(data);
 };
 
+const searchPost = async (req, res) => {
+  const { q } = req.query;
+  const { email } = req.user.user;
+  const { status, data } = await blogPostService.searchPost(q, email);
+  res.status(mapStatusHTTP(status)).json(data);
+};
+
 module.exports = {
   createNewPost,
   getAll,
   getById,
   update,
   deletePost,
+  searchPost,
 };

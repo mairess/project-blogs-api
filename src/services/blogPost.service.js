@@ -1,6 +1,7 @@
 const { BlogPost, User, Category } = require('../models');
 const { validateUpdatePost } = require('./validations');
 const createNewPost = require('./createNewPost');
+const searchPost = require('./searchPost');
 
 const getAll = async (email) => {
   const user = await User.findOne({ where: { email } });
@@ -38,6 +39,7 @@ const update = async (postData, id, email) => {
   const updatedPost = await getById(id);
   return { status: updatedPost.status, data: updatedPost.data };
 };
+
 const deletePost = async (id, email) => {
   const post = await BlogPost.findOne({ where: { id } });
   if (!post) return { status: 'NOT_FOUND', data: { message: 'Post does not exist' } };
@@ -48,4 +50,10 @@ const deletePost = async (id, email) => {
   return { status: 'NO_CONTENT' };
 };
 
-module.exports = { createNewPost, getAll, getById, update, deletePost };
+module.exports = { createNewPost, 
+  getAll,
+  getById,
+  update,
+  deletePost,
+  searchPost, 
+};
