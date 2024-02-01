@@ -1,8 +1,7 @@
 const validateCategories = require('./validateCategories');
-const associateCategoryWithPost = require('./associateCategory');
 const {
-  validateNewLogin,
-  validateCreateNewUser,
+  validateLogin,
+  validateNewUser,
   validateCategory,
   validateBlogPost,
   validateUpdatePost,
@@ -10,10 +9,9 @@ const {
 
 module.exports = {
   validateCategories,
-  validateNewLogin,
-  validateCreateNewUser,
+  validateLogin,
+  validateNewUser,
   validateCategory,
   validateBlogPost,
-  associateCategoryWithPost,
   validateUpdatePost,
 };

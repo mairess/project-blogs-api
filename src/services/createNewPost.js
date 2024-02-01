@@ -1,9 +1,7 @@
 const Sequelize = require('sequelize');
 const config = require('../config/config');
-const { validateBlogPost,
-  validateCategories, 
-  associateCategoryWithPost,
-} = require('./validations');
+const { validateBlogPost, validateCategories } = require('./validations');
+const { associateCategoryWithPost } = require('../utils');
 const { BlogPost, User } = require('../models');
 
 const env = process.env.NODE_ENV || 'development';

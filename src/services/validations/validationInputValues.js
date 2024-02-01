@@ -1,44 +1,44 @@
 const { 
-  addNewLoginSchema, 
-  addCreateNewUserSchema, 
-  addNewCategorySchema,
-  addNewPostSchema, 
-  addNewUpdatePostSchema,
+  schemaLogin,
+  schemaNewUser,
+  schemaCategory,
+  schemaNewPost,
+  schemaUpdatePost,
 } = require('./schemas');
 
-const validateNewLogin = (keysObjectToValidate) => {
-  const { error } = addNewLoginSchema.validate(keysObjectToValidate);
+const validateLogin = (keysObjectToValidate) => {
+  const { error } = schemaLogin.validate(keysObjectToValidate);
 
   if (error) return { status: 'BAD_REQUEST', message: error.message };
 };
 
-const validateCreateNewUser = (keysObjectToValidate) => {
-  const { error } = addCreateNewUserSchema.validate(keysObjectToValidate);
+const validateNewUser = (keysObjectToValidate) => {
+  const { error } = schemaNewUser.validate(keysObjectToValidate);
 
   if (error) return { status: 'BAD_REQUEST', message: error.message };
 };
 
 const validateCategory = (keysObjectToValidate) => {
-  const { error } = addNewCategorySchema.validate(keysObjectToValidate);
+  const { error } = schemaCategory.validate(keysObjectToValidate);
 
   if (error) return { status: 'BAD_REQUEST', message: error.message };
 };
 
 const validateBlogPost = (keysObjectToValidate) => {
-  const { error } = addNewPostSchema.validate(keysObjectToValidate);
+  const { error } = schemaNewPost.validate(keysObjectToValidate);
 
   if (error) return { status: 'BAD_REQUEST', message: error.message };
 };
 
 const validateUpdatePost = (keysObjectToValidate) => {
-  const { error } = addNewUpdatePostSchema.validate(keysObjectToValidate);
+  const { error } = schemaUpdatePost.validate(keysObjectToValidate);
 
   if (error) return { status: 'BAD_REQUEST', message: error.message };
 };
 
 module.exports = {
-  validateNewLogin,
-  validateCreateNewUser,
+  validateLogin,
+  validateNewUser,
   validateCategory,
   validateBlogPost,
   validateUpdatePost,

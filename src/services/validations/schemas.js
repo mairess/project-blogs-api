@@ -1,60 +1,45 @@
 const Joi = require('joi');
 
 const errorMessage = 'Some required fields are missing';
+const displayNameMinLengthMessage = '"displayName" length must be at least 8 characters long';
+const passwordMinLengthMessage = '"password" length must be at least 6 characters long';
+const emailMessage = '"email" must be a valid email';
+const categoryIdNotFoundMessage = 'one or more "categoryIds" not found';
 
-const addNewLoginSchema = Joi.object({
+const schemaLogin = Joi.object({
   email: Joi.string().required().min(1),
   password: Joi.string().required().min(1),
-})
-  .messages({
-    'any.required': errorMessage,
-    'string.empty': errorMessage,
-  });
+}).messages({ 'any.required': errorMessage, 'string.empty': errorMessage });
 
-const addCreateNewUserSchema = Joi.object({
+const schemaNewUser = Joi.object({
   displayName: Joi.string().required().min(8)
-    .messages({
-      'string.min': '"displayName" length must be at least 8 characters long',
-    }),
-  email: Joi.string().email().required()
-    .messages({
-      'string.email': '"email" must be a valid email',
-    }),
-  password: Joi.string().required().min(6)
-    .messages({
-      'string.min': '"password" length must be at least 6 characters long',
-    }),
-});
+    .messages({ 'string.min': displayNameMinLengthMessage }),
+  email: Joi.string().email().required(),
+  password: Joi.string().required().min(6) 
+    .messages({ 'string.min': passwordMinLengthMessage, 'string.email': emailMessage }) });
 
-const addNewCategorySchema = Joi.object({
-  name: Joi.string().required().min(1),
-});
+const schemaCategory = Joi.object({ name: Joi.string().required().min(1) });
 
-const addNewPostSchema = Joi.object({
+const schemaNewPost = Joi.object({
   title: Joi.string().required().min(1),
   content: Joi.string().required().min(1),
   categoryIds: Joi.array().required().min(1),
   email: Joi.string(),
-})
-  .messages({
-    'string.empty': errorMessage,
-    'any.required': errorMessage,
-    'array.min': 'one or more "categoryIds" not found',
-  });
+}).messages({ 
+  'string.empty': errorMessage, 
+  'any.required': errorMessage,
+  'array.min': categoryIdNotFoundMessage,
+});
 
-const addNewUpdatePostSchema = Joi.object({
+const schemaUpdatePost = Joi.object({
   title: Joi.string().required().min(1),
   content: Joi.string().required().min(1),
-})
-  .messages({
-    'string.empty': errorMessage,
-    'any.required': errorMessage,
-  });
+}).messages({ 'string.empty': errorMessage, 'any.required': errorMessage });
 
 module.exports = {
-  addNewLoginSchema,
-  addCreateNewUserSchema,
-  addNewCategorySchema,
-  addNewPostSchema,
-  addNewUpdatePostSchema,
+  schemaLogin,
+  schemaNewUser,
+  schemaCategory,
+  schemaNewPost,
+  schemaUpdatePost,
 };

@@ -1,4 +1,4 @@
-const { PostCategory } = require('../../models');
+const { PostCategory } = require('../models');
 
 const associateCategoryWithPost = async (postId, categoryIds, transaction) => {
   const arrayOfPostCategory = categoryIds.map((categoryId) => ({ postId, categoryId }));

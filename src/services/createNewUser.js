@@ -1,10 +1,10 @@
 const bcrypt = require('bcrypt');
-const { validateCreateNewUser } = require('./validations/validationInputValues');
+const { validateNewUser } = require('./validations/validationInputValues');
 const { User } = require('../models');
 const { auth } = require('../utils');
 
 const creteNewUser = async (userCredentials) => {
-  const error = validateCreateNewUser(userCredentials);
+  const error = validateNewUser(userCredentials);
   if (error) return { status: 'BAD_REQUEST', data: { message: error.message } };
   
   const user = await User.findOne({ where: { email: userCredentials.email } });
