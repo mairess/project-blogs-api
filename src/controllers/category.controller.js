@@ -1,4 +1,4 @@
-const { categoryService } = require('../services');
+const { categoryService } = require('../services/as');
 const { mapStatusHTTP } = require('../utils');
 
 const creteNewCategory = async (req, res) => {

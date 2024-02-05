@@ -1,9 +1,14 @@
-const userService = require('./user.service');
-const categoryService = require('./category.service');
-const blogPostService = require('./blogPost.service');
+const fs = require('fs');
+const path = require('path');
 
-module.exports = {
-  userService,
-  categoryService,
-  blogPostService,
-};
+const routes = {};
+
+fs.readdirSync(__dirname)
+  .filter((file) => file.includes('service'))
+  .forEach((file) => {
+    const route = require(path.join(__dirname, file));
+    const routeName = file.replace('.service.js', 'Service');
+    routes[routeName] = route;
+  });
+
+module.exports = routes;

@@ -1,4 +1,4 @@
-const { userService } = require('../services');
+const { userService } = require('../services/as');
 const { mapStatusHTTP } = require('../utils');
 
 const login = async (req, res) => {

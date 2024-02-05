@@ -1,11 +1,14 @@
-const loginRoutes = require('./login.route');
-const userRoutes = require('./user.route');
-const categoryRoutes = require('./category.route');
-const blogPostRoutes = require('./blogPost.route');
+const fs = require('fs');
+const path = require('path');
 
-module.exports = {
-  loginRoutes,
-  userRoutes,
-  categoryRoutes,
-  blogPostRoutes,
-};
+const routes = {};
+
+fs.readdirSync(__dirname)
+  .filter((file) => file.includes('route'))
+  .forEach((file) => {
+    const route = require(path.join(__dirname, file));
+    const routeName = file.replace('.route.js', 'Routes');
+    routes[routeName] = route;
+  });
+
+module.exports = routes;

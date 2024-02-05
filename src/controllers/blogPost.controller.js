@@ -1,4 +1,4 @@
-const { blogPostService } = require('../services');
+const { blogPostService } = require('../services/as');
 const { mapStatusHTTP } = require('../utils');
 
 const createNewPost = async (req, res) => {

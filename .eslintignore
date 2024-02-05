@@ -3,3 +3,7 @@
 **/seeders/
 **/models/
 /tests/
+
+**/controller/index.js
+**/service/index.js
+**/route/index.js
