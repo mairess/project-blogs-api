@@ -9,8 +9,8 @@ const searchPost = async (searchTerm, email) => {
   const post = await BlogPost.findAll({
     where: { 
       [Op.or]: [
-        { title: { [Op.like]: `%${searchTerm}` } },
-        { content: { [Op.like]: `%${searchTerm}` } },
+        { title: { [Op.like]: `%${searchTerm}%` } },
+        { content: { [Op.like]: `%${searchTerm}%` } },
       ],
     },
     include: [
