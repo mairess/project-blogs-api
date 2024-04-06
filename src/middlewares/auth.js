@@ -3,12 +3,12 @@ const { verify } = require('../utils/auth');
 const tokenCheck = async (req, res, next) => {
   const { authorization } = req.headers;
   
-  const [, token] = authorization.split(' ');
-  
   if (!authorization) {
     return res.status(401).json({ message: 'Token not found' });
   }
-      
+  
+  const [, token] = authorization.split(' ');
+  
   try {
     const user = verify(token);
     req.user = { user };

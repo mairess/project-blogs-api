@@ -5,6 +5,8 @@ const searchPost = require('./searchPost');
 
 const getAll = async (email) => {
   const user = await User.findOne({ where: { email } });
+  //  In case user have been deleted and try to get posts to not crash api
+  if (!user) return { status: 'NOT_FOUND', data: { message: 'User not found' } };
   const posts = await BlogPost.findAll({ 
     where: { userId: user.id }, 
     include: [

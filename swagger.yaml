@@ -1,0 +1,716 @@
+openapi: 3.0.0
+info:
+  title: Blogs API
+  description: API for Blog
+  version: 1.0.0
+servers:
+- url: http://localhost:3001
+paths:
+  /login:
+    post:
+      tags:
+      - Registration
+      summary: Route to authenticate and obtain access token
+      description: |
+        This endpoint allows users to authenticate and obtain an access token by providing valid credentials.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+      responses:
+        '200':
+          description: Successfully generated access token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7ImlkIjo1LCJkaXNwbGF5TmFtZSI6InVzdWFyaW8gZGUgdGVzdGUiLCJlbWFpbCI6InRlc3RlQGVtYWlsLmNvbSIsImltYWdlIjoibnVsbCJ9LCJpYXQiOjE2MjAyNDQxODcsImV4cCI6MTYyMDY3NjE4N30.Roc4byj6mYakYqd9LTCozU1hd9k_Vw5IWKGL4hcCVG8"
+        '400':
+          $ref: '#/components/responses/InvalidLogin'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "O \"password\" deve ter pelo menos 6 caracteres"
+  /user:
+    post:
+      tags:
+      - Registration
+      summary: Route to register a new user
+      description: |
+        This endpoint allows users to register a new account by providing required information.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: Successfully registered user and generated access token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7ImlkIjo1LCJkaXNwbGF5TmFtZSI6InVzdWFyaW8gZGUgdGVzdGUiLCJlbWFpbCI6InRlc3RlQGVtYWlsLmNvbSIsImltYWdlIjoibnVsbCJ9LCJpYXQiOjE2MjAyNDQxODcsImV4cCI6MTYyMDY3NjE4N30.Roc4byj6mYakYqd9LTCozU1hd9k_Vw5IWKGL4hcCVG8"
+        '400':
+          $ref: '#/components/responses/InvalidUser'
+        '409':
+          $ref: '#/components/responses/UserAlreadyRegistered'
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+      - User
+      summary: Retrieve all registered users
+      description: |
+        This endpoint allows users to retrieve all registered users.
+      responses:
+        '200':
+          description: Successfully retrieved all registered users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserList'
+              example:
+                - id: 1
+                  displayName: "Lewis Hamilton"
+                  email: "lewishamilton@gmail.com"
+                  image: "https://upload.wikimedia.org/wikipedia/commons/1/18/Lewis_Hamilton_2016_Malaysia_2.jpg"
+                - id: 2
+                  displayName: "Michael Schumacher"
+                  email: "MichaelSchumacher@gmail.com"
+                  image: "https://sportbuzz.uol.com.br/media/_versions/gettyimages-52491565_widelg.jpg"
+        '401':
+          $ref: '#/components/responses/TokenIssues'
+  /user/me:
+    delete:
+      security:
+        - bearerAuth: []
+      tags: 
+        - User
+      summary: Delete current user's post by ID
+      description: |
+        This endpoint allows the current user to delete itself.
+      responses:
+        '204':
+          description: Successfully deleted current user
+        '401':
+          $ref: '#/components/responses/TokenIssues'
+  /user/{id}:
+    get:
+      security:
+          - bearerAuth: []
+      tags:
+        - User
+      summary: Retrieve user by ID
+      description: |
+        This endpoint allows users to retrieve a specific user by ID.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The ID of the user to retrieve.
+      responses:
+        '200':
+          description: Successfully retrieved the user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserById'
+        '401':
+          $ref: '#/components/responses/TokenIssues'
+        '404':
+          $ref: '#/components/responses/UserNotFound'
+  /categories:
+    post:
+      security:
+          - bearerAuth: []
+      tags:
+      - Category
+      summary: Route to register a new category
+      description: |
+        This endpoint allows users to register a new category by providing required information.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Category'
+      responses:
+        '201':
+          description: Successfully registered category
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 3
+                  name:
+                    type: string
+                    example: Typescript
+        '401':
+          $ref: '#/components/responses/TokenIssues'
+        '400':
+          $ref: '#/components/responses/MissingName'
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+      - Category
+      summary: Retrieve all registered categories
+      description: |
+        This endpoint allows users to retrieve all registered categories.
+      responses:
+        '200':
+          description: Successfully retrieved all registered categories
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Categories'
+              example:
+                - id: 1
+                  name: "Inovação"
+                - id: 2
+                  name: "Escola"
+        '401':
+          $ref: '#/components/responses/TokenIssues'
+  /post:
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+      - Posts
+      summary: Route to create a new post
+      description: |
+        This endpoint allows users to create a new post by providing necessary information such as title, content, etc.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePost'
+      responses:
+        '201':
+          description: Successfully created a new post
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatePostResponse'
+        '401':
+          $ref: '#/components/responses/TokenIssues'
+        '400':
+          $ref: '#/components/responses/InvalidPost'
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+      - Posts
+      summary: Retrieve all registered posts
+      description: |
+        This endpoint allows users to retrieve all registered posts.
+      responses:
+        '200':
+          description: Successfully retrieved all registered posts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CreatePostResponse'
+              example:
+                - id: 1
+                  title: "Post do Ano"
+                  content: "Melhor post do ano"
+                  userId: 1
+                  published: "2011-08-01T19:58:00.000Z"
+                  updated: "2011-08-01T19:58:51.000Z"
+                  user:
+                    id: 1
+                    displayName: "Lewis Hamilton"
+                    email: "lewishamilton@gmail.com"
+                    image: "https://upload.wikimedia.org/wikipedia/commons/1/18/Lewis_Hamilton_2016_Malaysia_2.jpg"
+                  categories:
+                    - id: 1
+                      name: "Inovação"
+        '401':
+          $ref: '#/components/responses/TokenIssues'
+  /post/search:
+    get:
+      security:
+        - ApiKeyAuth: []
+      tags:
+        - Posts
+      summary: Search posts based on filters
+      description: |
+        This endpoint allows users to search for posts based on filters tittle and content.
+      parameters:
+        - in: query
+          name: q
+          description:  Title or content filter. Enter the search query here.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Posts found successfully
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/FoundPosts'
+                  - $ref: '#/components/schemas/NotFoundPosts'
+              examples:
+                FoundPosts:
+                 $ref: '#/components/schemas/PostById'
+                NotFoundPosts:
+                  value: []
+        '401':
+           $ref: '#/components/responses/TokenIssues'
+  /post/{id}:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - Posts
+      summary: Retrieve post by ID
+      description: |
+        This endpoint allows users to retrieve a specific post by ID.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The ID of the post to retrieve.
+      responses:
+        '200':
+          description: Successfully retrieved the post
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostById'
+        '401':
+          $ref: '#/components/responses/TokenIssues'
+        '404':
+          $ref: '#/components/responses/PostNotFound'
+    put:
+      security:
+        - bearerAuth: []
+      tags:
+        - Posts
+      summary: Update an existing post
+      description: |
+        This endpoint allows users to update an existing post by providing the required information.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The ID of the post to update.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePost'
+      responses:
+        '200':
+          description: Successful update of the post
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 3
+                  title:
+                    type: string
+                    example: "Latest updates, August 1st"
+                  content:
+                    type: string
+                    example: "The whole text for the blog post goes here in this key"
+                  userId:
+                    type: integer
+                    example: 1
+                  published:
+                    type: string
+                    format: date-time
+                    example: "2022-05-18T18:00:01.000Z"
+                  updated:
+                    type: string
+                    format: date-time
+                    example: "2022-05-18T18:07:32.000Z"
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      displayName:
+                        type: string
+                        example: "Lewis Hamilton"
+                      email:
+                        type: string
+                        format: email
+                        example: "lewishamilton@gmail.com"
+                      image:
+                        type: string
+                        format: uri
+                        example: "https://upload.wikimedia.org/wikipedia/commons/1/18/Lewis_Hamilton_2016_Malaysia_2.jpg"
+                  categories:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id: 
+                          type: integer
+                        name:
+                          type: string
+                    example:
+                      - id: 1
+                        name: Inovação
+                      - id: 2
+                        name: Escola
+        '401':
+          $ref: '#/components/responses/UnauthorizedUser'
+        '400':
+          $ref: '#/components/responses/RequiredFieldMissing'
+    delete:
+      security:
+        - bearerAuth: []
+      tags: 
+        - Posts
+      summary: Delete a post by ID
+      description: |
+        This endpoint enables users to delete a specific post identified by its unique ID.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The ID of the post to be deleted.
+      responses:
+        '204':
+          description: Successfully deleted the post
+        '401':
+          $ref: '#/components/responses/UnauthorizedUser'
+        '404':
+          $ref: '#/components/responses/PostNotFound'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Login:
+      type: object
+      properties:
+        email:
+          type: string
+          example: lewishamilton@gmail.com
+        password:
+          type: string
+          example: 123456
+    User:
+      type: object
+      properties:
+        displayName:
+          type: string
+          example: Brett Wiltshire
+        email:
+          type: string
+          example: brett@email.com
+        password:
+          type: string
+          example: 123456
+        image:
+          type: string
+          example: http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png
+    UserById:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        displayName:
+          type: string
+          example: Lewis Hamilton
+        email:
+          type: string
+          example: lewishamilton@gmail.com
+        image:
+          type: string
+          example: "https://upload.wikimedia.org/wikipedia/commons/1/18/Lewis_Hamilton_2016_Malaysia_2.jpg"
+    UserList:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+            description: The unique identifier of the user
+          displayName:
+            type: string
+            description: The display name of the user
+          email:
+            type: string
+            format: email
+            description: The email address of the user
+          image:
+            type: string
+            format: uri
+            description: The URL of the user's image
+    Category:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Typescript"
+      required:
+        - name
+    CategoryID:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Inovação"
+      required:
+        - id
+        - name
+    Categories:
+      type: array
+      items:
+        $ref: '#/components/schemas/CategoryID'
+    CreatePost:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Latest updates, August 1st"
+        content:
+          type: string
+          example: "The whole text for the blog post goes here in this key"
+        categoryIds:
+          type: array
+          items:
+            type: integer
+          example: [1, 2]
+      required:
+      - title
+      - content
+      - categoryIds
+    CreatePostResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 3
+        title:
+          type: string
+          example: "Latest updates, August 1st"
+        content:
+          type: string
+          example: "The whole text for the blog post goes here in this key"
+        userId:
+          type: integer
+          example: 1
+        updated:
+          type: string
+          format: date-time
+          example: "2022-05-18T18:00:01.196Z"
+        published:
+          type: string
+          format: date-time
+          example: "2022-05-18T18:00:01.196Z"
+    PostById:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: "Post do Ano"
+        content:
+          type: string
+          example: "Melhor post do ano"
+        userId:
+          type: integer
+          example: 1
+        published:
+          type: string
+          format: date-time
+          example: "2011-08-01T19:58:00.000Z"
+        updated:
+          type: string
+          format: date-time
+          example: "2011-08-01T19:58:51.000Z"
+        user:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+            displayName:
+              type: string
+              example: "Lewis Hamilton"
+            email:
+              type: string
+              example: "lewishamilton@gmail.com"
+            image:
+              type: string
+              example: "https://upload.wikimedia.org/wikipedia/commons/1/18/Lewis_Hamilton_2016_Malaysia_2.jpg"
+        categories:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              name:
+                type: string
+                example: "Inovação"
+    UpdatePost:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "How to post awesome"
+        content:
+          type: string
+          example: "I am posting something awesome here in this key."
+      required:
+        - title
+        - content
+    NotFoundPosts:
+      type: array
+      items: []
+    FoundPosts:
+      type: array
+      items:
+        $ref: '#/components/schemas/PostById'
+  responses:
+    InvalidLogin:
+      description: Invalid login data
+      content:
+        application/json:
+          examples:
+            RequiredFieldsMissing:
+              value:
+                message: "Some required fields are missing"
+            InvalidFields:
+              value:
+                message: "Invalid fields"
+    InvalidUser:
+      description: Invalid user data
+      content:
+        application/json:
+          examples:
+            DisplayNameMinChar:
+              value:
+                message: "\"displayName\" length must be at least 8 characters long"
+            InvalidEmailFormat:
+              value:
+                message: "\"email\" must be a valid email"
+            PasswordMinChar:
+              value:
+                message: "\"password\" length must be at least 6 characters long"
+    UserNotFound:
+      description: User not found
+      content:
+        application/json:
+          examples:
+            NotExistingUser:
+              value:
+                message: "User does not exist"
+    UserAlreadyRegistered:
+      description: User already registered
+      content:
+        application/json:
+          examples:
+            UserAlreadyRegistered:
+              value:
+                message: "User already registered"
+    TokenIssues:
+      description: Token issue
+      content:
+        application/json:
+          examples:
+            NotFoundToken:
+              value:
+                message: "Token not found"
+            InvalidToken:
+              value:
+                message: "Expired or invalid token"
+    MissingName:
+      description: Invalid login data
+      content:
+        application/json:
+          examples:
+            MissingName:
+              value:
+                message: "\"name\" is required"
+    InvalidPost:
+      description: Invalid post data
+      content:
+        application/json:
+          examples:
+            MissingRequiredFields:
+              value:
+                message: "Some required fields are missing"
+            CategoryNotFound:
+              value:
+                message: "one or more \"categoryIds\" not found"
+    PostNotFound:
+      description: Post not found
+      content:
+        application/json:
+          examples:
+            PostNotFound:
+              value:
+                message: "Post does not exist"
+    RequiredFieldMissing:
+      description: Required fields are missing
+      content:
+        application/json:
+          examples:
+            RequiredFieldMissing:
+              value:
+                message: "Some required fields are missing"
+    UnauthorizedUser:
+      description: User unauthorized
+      content:
+        application/json:
+          examples:
+            Unauthorized:
+              value:
+                message: "Unauthorized user"
+            NotFoundToken:
+              value:
+                message: "Token not found"
+            InvalidToken:
+              value:
+                message: "Expired or invalid token"
