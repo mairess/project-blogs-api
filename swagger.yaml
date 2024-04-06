@@ -1,0 +1,383 @@
+openapi: 3.0.0
+info:
+  title: Blogs API
+  description: API for Blog
+  version: 1.0.0
+servers:
+- url: http://localhost:3001
+paths:
+  /login:
+    post:
+      tags:
+      - Registration
+      summary: Route to authenticate and obtain access token
+      description: |
+        This endpoint allows users to authenticate and obtain an access token by providing valid credentials.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+      responses:
+        '200':
+          description: Successfully generated access token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7ImlkIjo1LCJkaXNwbGF5TmFtZSI6InVzdWFyaW8gZGUgdGVzdGUiLCJlbWFpbCI6InRlc3RlQGVtYWlsLmNvbSIsImltYWdlIjoibnVsbCJ9LCJpYXQiOjE2MjAyNDQxODcsImV4cCI6MTYyMDY3NjE4N30.Roc4byj6mYakYqd9LTCozU1hd9k_Vw5IWKGL4hcCVG8"
+        '400':
+          $ref: '#/components/responses/InvalidLogin'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "O \"password\" deve ter pelo menos 6 caracteres"
+  /user:
+    post:
+      tags:
+      - Registration
+      summary: Route to register a new user
+      description: |
+        This endpoint allows users to register a new account by providing required information.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: Successfully registered user and generated access token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7ImlkIjo1LCJkaXNwbGF5TmFtZSI6InVzdWFyaW8gZGUgdGVzdGUiLCJlbWFpbCI6InRlc3RlQGVtYWlsLmNvbSIsImltYWdlIjoibnVsbCJ9LCJpYXQiOjE2MjAyNDQxODcsImV4cCI6MTYyMDY3NjE4N30.Roc4byj6mYakYqd9LTCozU1hd9k_Vw5IWKGL4hcCVG8"
+        '400':
+          $ref: '#/components/responses/InvalidUser'
+        '409':
+          $ref: '#/components/responses/UserAlreadyRegistered'
+    get:
+      tags:
+      - User
+      summary: Retrieve all registered users
+      description: |
+        This endpoint allows users to retrieve all registered users.
+      responses:
+        '200':
+          description: Successfully retrieved all registered users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserList'
+              example:
+                - id: 1
+                  displayName: "Lewis Hamilton"
+                  email: "lewishamilton@gmail.com"
+                  image: "https://upload.wikimedia.org/wikipedia/commons/1/18/Lewis_Hamilton_2016_Malaysia_2.jpg"
+                - id: 2
+                  displayName: "Michael Schumacher"
+                  email: "MichaelSchumacher@gmail.com"
+                  image: "https://sportbuzz.uol.com.br/media/_versions/gettyimages-52491565_widelg.jpg"
+  /user/{id}:
+    get:
+      tags:
+        - User
+      summary: Retrieve user by ID
+      description: |
+        This endpoint allows users to retrieve a specific user by their ID.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The ID of the user to retrieve.
+      responses:
+        '200':
+          description: Successfully retrieved the user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserById'
+        '401':
+          $ref: '#/components/responses/TokenIssues'
+        '404':
+          $ref: '#/components/responses/UserNotFound'
+  /categories:
+    post:
+      tags:
+      - Category
+      summary: Route to register a new category
+      description: |
+        This endpoint allows users to register a new category by providing required information.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Category'
+      responses:
+        '201':
+          description: Successfully registered category
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 3
+                  name:
+                    type: string
+                    example: Typescript
+        '400':
+          $ref: '#/components/responses/MissingName'
+    get:
+      tags:
+      - Category
+      summary: Retrieve all registered categories
+      description: |
+        This endpoint allows users to retrieve all registered categories.
+      responses:
+        '200':
+          description: Successfully retrieved all registered categories
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Categories'
+              example:
+                - id: 1
+                  name: "Inovação"
+                - id: 2
+                  name: "Escola"
+  /post:
+    post:
+      tags:
+      - Posts
+      summary: Route to create a new post
+      description: |
+        This endpoint allows users to create a new post by providing necessary information such as title, content, etc.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePost'
+      responses:
+        '201':
+          description: Successfully created a new post
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatePostResponse'
+        '400':
+          $ref: '#/components/responses/InvalidPost'
+components:
+  schemas:
+    Login:
+      type: object
+      properties:
+        email:
+          type: string
+          example: lewishamilton@gmail.com
+        password:
+          type: string
+          example: 123456
+    User:
+      type: object
+      properties:
+        displayName:
+          type: string
+          example: Brett Wiltshire
+        email:
+          type: string
+          example: brett@email.com
+        password:
+          type: string
+          example: 123456
+        image:
+          type: string
+          example: http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png
+    UserById:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        displayName:
+          type: string
+          example: Lewis Hamilton
+        email:
+          type: string
+          example: lewishamilton@gmail.com
+        image:
+          type: string
+          example: "https://upload.wikimedia.org/wikipedia/commons/1/18/Lewis_Hamilton_2016_Malaysia_2.jpg"
+    UserList:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+            description: The unique identifier of the user
+          displayName:
+            type: string
+            description: The display name of the user
+          email:
+            type: string
+            format: email
+            description: The email address of the user
+          image:
+            type: string
+            format: uri
+            description: The URL of the user's image
+    Category:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Typescript"
+      required:
+        - name
+    CategoryID:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Inovação"
+      required:
+        - id
+        - name
+    Categories:
+      type: array
+      items:
+        $ref: '#/components/schemas/CategoryID'
+    CreatePost:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Latest updates, August 1st"
+        content:
+          type: string
+          example: "The whole text for the blog post goes here in this key"
+        categoryIds:
+          type: array
+          items:
+            type: integer
+          example: [1, 2]
+      required:
+      - title
+      - content
+      - categoryIds
+    CreatePostResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 3
+        title:
+          type: string
+          example: "Latest updates, August 1st"
+        content:
+          type: string
+          example: "The whole text for the blog post goes here in this key"
+        userId:
+          type: integer
+          example: 1
+        updated:
+          type: string
+          format: date-time
+          example: "2022-05-18T18:00:01.196Z"
+        published:
+          type: string
+          format: date-time
+          example: "2022-05-18T18:00:01.196Z"
+  responses:
+    InvalidLogin:
+      description: Invalid login data
+      content:
+        application/json:
+          examples:
+            RequiredFieldsMissing:
+              value:
+                message: "Some required fields are missing"
+            InvalidFields:
+              value:
+                message: "Invalid fields"
+    InvalidUser:
+      description: Invalid user data
+      content:
+        application/json:
+          examples:
+            DisplayNameMinChar:
+              value:
+                message: "\"displayName\" length must be at least 8 characters long"
+            InvalidEmailFormat:
+              value:
+                message: "\"email\" must be a valid email"
+            PasswordMinChar:
+              value:
+                message: "\"password\" length must be at least 6 characters long"
+    UserNotFound:
+      description: User not found
+      content:
+        application/json:
+          examples:
+            NotExistingUser:
+              value:
+                message: "User does not exist"
+    UserAlreadyRegistered:
+      description: User already registered
+      content:
+        application/json:
+          examples:
+            UserAlreadyRegistered:
+              value:
+                message: "User already registered"
+    TokenIssues:
+      description: Invalid login data
+      content:
+        application/json:
+          examples:
+            NotFound:
+              value:
+                message: "Token not found"
+            Invalid:
+              value:
+                message: "Expired or invalid token"
+    MissingName:
+      description: Invalid login data
+      content:
+        application/json:
+          examples:
+            MissingName:
+              value:
+                message: "\"name\" is required"
+    InvalidPost:
+      description: Invalid post data
+      content:
+        application/json:
+          examples:
+            MissingRequiredFields:
+              value:
+                message: "Some required fields are missing"
+            CategoryNotFound:
+              value:
+                message: "one or more \"categoryIds\" not found"
