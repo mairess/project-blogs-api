@@ -103,11 +103,15 @@ npm run dev
 
 A documentação desta api está disponível na rota `/api-docs`
 
-## Competências desenvolvidas
+## Stack utilizadas
 
-- Relacionamento de tabelas `N:N` e `N:1`.
-- Autenticação de usurário com `JWT` .
-- Integração e interação com um banco de dados `MySQL`.
-- Conhecimento de arquitetura em camadas `MSC`.
-- Conhecimento sobre o ORM `Sequelize`.
-- Conhecimento sobre `hashing` de senha com `Bcrypt`.
+- Javascript
+- Node
+- Express
+- Sequelize
+- MySQL
+- JWT
+- Bcrypt
+- Joi
+- Docker
+- swagger-ui
