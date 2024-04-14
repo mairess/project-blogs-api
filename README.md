@@ -103,7 +103,7 @@ npm run dev
 
 A documentação desta api está disponível na rota `/api-docs`
 
-## Stack utilizadas
+## Tecnologias utilizadas
 
 - Javascript
 - Node
@@ -114,4 +114,4 @@ A documentação desta api está disponível na rota `/api-docs`
 - Bcrypt
 - Joi
 - Docker
-- swagger-ui
+- Swagger-ui
